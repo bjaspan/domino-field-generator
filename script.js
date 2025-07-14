@@ -1,15 +1,60 @@
+/**
+ * YOUR DOMINO COLORS
+ * -------------------
+ * Edit this list to match the RGB values of the domino colors you own.
+ * Each color is an array of three numbers: [Red, Green, Blue].
+ */
+const DOMINO_COLORS = [
+    [255, 255, 255], // White
+    [0, 0, 0],       // Black
+    [255, 0, 0],     // Red
+    [0, 128, 0],     // Green
+    [0, 0, 255],     // Blue
+    [255, 255, 0],   // Yellow
+    [255, 165, 0],   // Orange
+    [128, 0, 128]    // Purple
+];
+
+// --- NEW FUNCTION ---
+// This function runs once when the page loads to show your available colors.
+function displayAvailableColors() {
+    const paletteContainer = document.getElementById('colorPalette');
+    paletteContainer.innerHTML = ''; // Clear any existing content
+
+    DOMINO_COLORS.forEach(color => {
+        const item = document.createElement('div');
+        item.classList.add('palette-item');
+
+        const colorBlock = document.createElement('div');
+        colorBlock.classList.add('color-block');
+        colorBlock.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+
+        const colorText = document.createElement('span');
+        colorText.textContent = `rgb(${color.join(', ')})`;
+
+        item.appendChild(colorBlock);
+        item.appendChild(colorText);
+        paletteContainer.appendChild(item);
+    });
+}
+
+// --- SCRIPT EXECUTION STARTS HERE ---
+
+// Display the configured colors as soon as the page loads
+document.addEventListener('DOMContentLoaded', displayAvailableColors);
+
+
 document.getElementById('generateButton').addEventListener('click', () => {
     const uploader = document.getElementById('imageUploader');
     const width = parseInt(document.getElementById('fieldWidth').value);
     const height = parseInt(document.getElementById('fieldHeight').value);
-    const numColors = parseInt(document.getElementById('numColors').value);
 
     if (uploader.files && uploader.files[0]) {
         const reader = new FileReader();
         reader.onload = (event) => {
             const img = new Image();
             img.onload = () => {
-                processImage(img, width, height, numColors);
+                processImage(img, width, height);
             };
             img.src = event.target.result;
         };
@@ -19,15 +64,9 @@ document.getElementById('generateButton').addEventListener('click', () => {
     }
 });
 
-function processImage(img, width, height, numColors) {
-    // 1. Initialize the new library
-    const colorThief = new ColorThief();
+function processImage(img, width, height) {
+    const palette = DOMINO_COLORS;
 
-    // 2. Use the library to get the color palette
-    const palette = colorThief.getPalette(img, numColors);
-
-    // 3. Create the grid by drawing a resized version of the image
-    // and finding the closest palette color for each pixel.
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = width;
@@ -46,7 +85,6 @@ function processImage(img, width, height, numColors) {
         colorGrid.push(row);
     }
 
-    // Generate the outputs with the simplified color grid
     createDominoField(colorGrid, width);
     createRowList(colorGrid);
     createTotalCount(colorGrid);
@@ -55,6 +93,7 @@ function processImage(img, width, height, numColors) {
 function findClosestColor(color, palette) {
     let closest = palette[0];
     let minDistance = Infinity;
+
     for (const paletteColor of palette) {
         let distance = Math.sqrt(
             Math.pow(color[0] - paletteColor[0], 2) +

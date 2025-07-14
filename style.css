@@ -7,6 +7,24 @@ body {
     margin-bottom: 2em;
 }
 
+/* New styles for the color palette */
+#colorPalette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 2em;
+    border: 1px solid #ccc;
+    padding: 15px;
+}
+
+.palette-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+/* End of new styles */
+
 #dominoField {
     display: grid;
     border: 1px solid #ccc;
@@ -33,5 +51,7 @@ body {
 }
 
 .count {
+    min-width: 30px; /* Ensures the element has a consistent width */
+    text-align: left;  /* Aligns the text within the element */
     margin-right: 15px;
 }
