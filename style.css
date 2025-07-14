@@ -1,0 +1,37 @@
+body {
+    font-family: sans-serif;
+    padding: 2em;
+}
+
+.controls {
+    margin-bottom: 2em;
+}
+
+#dominoField {
+    display: grid;
+    border: 1px solid #ccc;
+    margin-bottom: 2em;
+}
+
+.cell {
+    width: 25px;
+    height: 40px;
+}
+
+.row-sequence, .color-summary {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.color-block {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    border: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.count {
+    margin-right: 15px;
+}

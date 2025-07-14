@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domino Field Image Converter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Domino Image Converter 🎨</h1>
+    <div class="controls">
+        <input type="file" id="imageUploader">
+        <label for="fieldWidth">Width:</label>
+        <input type="number" id="fieldWidth" value="15">
+        <label for="fieldHeight">Height:</label>
+        <input type="number" id="fieldHeight" value="10">
+        <label for="numColors">Colors:</label>
+        <input type="number" id="numColors" value="16">
+        <button id="generateButton">Generate</button>
+    </div>
+
+    <div id="results">
+        <h2>1. Domino Field</h2>
+        <div id="dominoField"></div>
+
+        <h2>2. Row Sequences</h2>
+        <div id="rowList"></div>
+
+        <h2>3. Total Domino Count</h2>
+        <div id="totalCount"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
