@@ -1,50 +1,55 @@
 /**
  * YOUR DOMINO COLORS
- * -------------------
- * Edit this list to match the RGB values of the domino colors you own.
- * Each color is an array of three numbers: [Red, Green, Blue].
+ * This list will be populated by the color picker tool.
+ * You can also paste a previously generated list here.
  */
-const DOMINO_COLORS = [
-    [255, 255, 255], // White
-    [0, 0, 0],       // Black
-    [255, 0, 0],     // Red
-    [0, 128, 0],     // Green
-    [0, 0, 255],     // Blue
-    [255, 255, 0],   // Yellow
-    [255, 165, 0],   // Orange
-    [128, 0, 128]    // Purple
-];
+let DOMINO_COLORS = [];
 
-// --- NEW FUNCTION ---
-// This function runs once when the page loads to show your available colors.
-function displayAvailableColors() {
-    const paletteContainer = document.getElementById('colorPalette');
-    paletteContainer.innerHTML = ''; // Clear any existing content
+// --- EVENT LISTENERS ---
 
-    DOMINO_COLORS.forEach(color => {
-        const item = document.createElement('div');
-        item.classList.add('palette-item');
-
-        const colorBlock = document.createElement('div');
-        colorBlock.classList.add('color-block');
-        colorBlock.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-
-        const colorText = document.createElement('span');
-        colorText.textContent = `rgb(${color.join(', ')})`;
-
-        item.appendChild(colorBlock);
-        item.appendChild(colorText);
-        paletteContainer.appendChild(item);
-    });
-}
-
-// --- SCRIPT EXECUTION STARTS HERE ---
-
-// Display the configured colors as soon as the page loads
 document.addEventListener('DOMContentLoaded', displayAvailableColors);
 
+document.getElementById('pickerUploader').addEventListener('change', (event) => {
+    const canvas = document.getElementById('colorPickerCanvas');
+    const ctx = canvas.getContext('2d');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+});
+
+document.getElementById('colorPickerCanvas').addEventListener('click', (event) => {
+    const canvas = event.target;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const color = [pixel[0], pixel[1], pixel[2]];
+
+    if (!DOMINO_COLORS.some(c => JSON.stringify(c) === JSON.stringify(color))) {
+        DOMINO_COLORS.push(color);
+        displayAvailableColors();
+    }
+});
+
+document.getElementById('clearPaletteButton').addEventListener('click', () => {
+    DOMINO_COLORS = [];
+    displayAvailableColors();
+});
 
 document.getElementById('generateButton').addEventListener('click', () => {
+    if (DOMINO_COLORS.length === 0) {
+        alert("Please define a color palette first by picking colors from an image.");
+        return;
+    }
     const uploader = document.getElementById('imageUploader');
     const width = parseInt(document.getElementById('fieldWidth').value);
     const height = parseInt(document.getElementById('fieldHeight').value);
@@ -60,13 +65,34 @@ document.getElementById('generateButton').addEventListener('click', () => {
         };
         reader.readAsDataURL(uploader.files[0]);
     } else {
-        alert("Please select an image file.");
+        alert("Please select an image to convert.");
     }
 });
 
+
+// --- CORE FUNCTIONS ---
+
+/**
+ * This function is updated to display the DOMINO_COLORS array
+ * as a copy-pasteable code block with inline color swatches.
+ */
+function displayAvailableColors() {
+    const paletteContainer = document.getElementById('colorPalette');
+
+    let htmlContent = 'let DOMINO_COLORS = [\n';
+
+    DOMINO_COLORS.forEach(color => {
+        const colorString = `    [${color[0]}, ${color[1]}, ${color[2]}],`;
+        const colorBox = `<div class="color-block-inline" style="background-color: rgb(${color[0]}, ${color[1]}, ${color[2]})"></div>`;
+        htmlContent += `${colorString} ${colorBox}\n`;
+    });
+
+    htmlContent += '];';
+    paletteContainer.innerHTML = htmlContent;
+}
+
 function processImage(img, width, height) {
     const palette = DOMINO_COLORS;
-
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = width;
@@ -91,6 +117,7 @@ function processImage(img, width, height) {
 }
 
 function findClosestColor(color, palette) {
+    if (palette.length === 0) return [0, 0, 0];
     let closest = palette[0];
     let minDistance = Infinity;
 

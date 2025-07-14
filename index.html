@@ -8,26 +8,44 @@
 </head>
 <body>
     <h1>Domino Image Converter 🎨</h1>
-    <div class="controls">
-        <input type="file" id="imageUploader">
-        <label for="fieldWidth">Width:</label>
-        <input type="number" id="fieldWidth" value="15">
-        <label for="fieldHeight">Height:</label>
-        <input type="number" id="fieldHeight" value="10">
-        <button id="generateButton">Generate</button>
+
+    <div class="section-box">
+        <h2>Step 1: Define Your Colors (Option A: Pick from Image)</h2>
+        <p>Upload a photo of your dominoes, then click on a domino in the image to add its color to the palette.</p>
+        <div class="controls">
+            <input type="file" id="pickerUploader">
+            <button id="clearPaletteButton">Clear Palette</button>
+        </div>
+        <canvas id="colorPickerCanvas"></canvas>
     </div>
 
-    <h2>Available Domino Colors</h2>
-    <div id="colorPalette"></div>
+    <div class="section-box">
+        <!-- Text updated here -->
+        <h2>Step 1: Define Your Colors (Option B: Current Palette Code)</h2>
+        <p>You can copy this code and paste it into the script to save your palette for next time.</p>
+        <div id="colorPalette"></div>
+    </div>
+
+    <div class="section-box">
+        <h2>Step 2: Generate Domino Field</h2>
+        <p>Upload your main image to convert it into a domino pattern using the colors defined above.</p>
+        <div class="controls">
+            <input type="file" id="imageUploader">
+            <label for="fieldWidth">Width:</label>
+            <input type="number" id="fieldWidth" value="15">
+            <label for="fieldHeight">Height:</label>
+            <input type="number" id="fieldHeight" value="10">
+            <button id="generateButton">Generate</button>
+        </div>
+    </div>
 
     <div id="results">
-        <h2>1. Domino Field</h2>
+        <h2>Results</h2>
+        <h3>1. Domino Field</h3>
         <div id="dominoField"></div>
-
-        <h2>2. Row Sequences</h2>
+        <h3>2. Row Sequences</h3>
         <div id="rowList"></div>
-
-        <h2>3. Total Domino Count</h2>
+        <h3>3. Total Domino Count</h3>
         <div id="totalCount"></div>
     </div>
 

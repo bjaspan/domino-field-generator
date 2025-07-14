@@ -4,26 +4,46 @@ body {
 }
 
 .controls {
-    margin-bottom: 2em;
-}
-
-/* New styles for the color palette */
-#colorPalette {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 2em;
-    border: 1px solid #ccc;
-    padding: 15px;
-}
-
-.palette-item {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 15px;
+    margin-bottom: 1em;
 }
-/* End of new styles */
+
+.section-box {
+    border: 1px solid #ccc;
+    padding: 0 20px 10px;
+    margin-bottom: 2em;
+    border-radius: 8px;
+}
+
+#colorPickerCanvas {
+    max-width: 100%;
+    border: 1px solid #999;
+    cursor: crosshair;
+    margin-top: 10px;
+}
+
+/* Updated styles for the code display */
+#colorPalette {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre; /* This makes it behave like a <pre> tag */
+    overflow-x: auto;
+}
+
+/* New style for the small color squares in the code */
+.color-block-inline {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid #999;
+    margin-left: 10px;
+}
 
 #dominoField {
     display: grid;
@@ -51,7 +71,7 @@ body {
 }
 
 .count {
-    min-width: 30px; /* Ensures the element has a consistent width */
-    text-align: left;  /* Aligns the text within the element */
+    min-width: 30px;
+    text-align: left;
     margin-right: 15px;
 }
