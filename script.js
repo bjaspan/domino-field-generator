@@ -4,11 +4,13 @@
  * You can also paste a previously generated list here.
  */
 let DOMINO_COLORS = [];
+let pickerImage = null; // This will hold the full-resolution image for sampling
 
 // --- EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', displayAvailableColors);
 
+// This listener now stores the uploaded image for later use
 document.getElementById('pickerUploader').addEventListener('change', (event) => {
     const canvas = document.getElementById('colorPickerCanvas');
     const ctx = canvas.getContext('2d');
@@ -16,8 +18,12 @@ document.getElementById('pickerUploader').addEventListener('change', (event) => 
     reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
+            // Store the full-resolution image object
+            pickerImage = img;
+            // Draw the image to the visible canvas. This canvas can be scaled by CSS
+            // without affecting our color picking logic.
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
             ctx.drawImage(img, 0, 0);
         };
         img.src = e.target.result;
@@ -25,23 +31,54 @@ document.getElementById('pickerUploader').addEventListener('change', (event) => 
     reader.readAsDataURL(event.target.files[0]);
 });
 
+/**
+ * This is the corrected event listener.
+ * It uses a more robust method that works correctly with large, scaled images.
+ */
 document.getElementById('colorPickerCanvas').addEventListener('click', (event) => {
+    if (!pickerImage) {
+        alert("Please upload an image to pick colors from first.");
+        return;
+    }
+
     const canvas = event.target;
-    const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const pixel = ctx.getImageData(x, y, 1, 1).data;
+
+    // 1. Calculate the click position as a ratio (e.g., 0.75 for 75%) of the DISPLAYED canvas
+    const xRatio = (event.clientX - rect.left) / rect.width;
+    const yRatio = (event.clientY - rect.top) / rect.height;
+
+    // 2. Determine the corresponding pixel coordinates in the ORIGINAL, FULL-RESOLUTION image
+    const sourceX = Math.floor(xRatio * pickerImage.naturalWidth);
+    const sourceY = Math.floor(yRatio * pickerImage.naturalHeight);
+
+    // 3. Create a tiny, 1x1 off-screen canvas to perform the color sampling
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = 1;
+    offscreenCanvas.height = 1;
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+
+    // 4. Draw just the single pixel we want from the full-res image onto our tiny canvas
+    offscreenCtx.drawImage(pickerImage, sourceX, sourceY, 1, 1, 0, 0, 1, 1);
+
+    // 5. Get the color data from our 1x1 canvas
+    const pixel = offscreenCtx.getImageData(0, 0, 1, 1).data;
     const color = [pixel[0], pixel[1], pixel[2]];
 
+    // Add the new color to our list (avoiding duplicates)
     if (!DOMINO_COLORS.some(c => JSON.stringify(c) === JSON.stringify(color))) {
         DOMINO_COLORS.push(color);
         displayAvailableColors();
     }
 });
 
+
 document.getElementById('clearPaletteButton').addEventListener('click', () => {
     DOMINO_COLORS = [];
+    pickerImage = null;
+    const canvas = document.getElementById('colorPickerCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     displayAvailableColors();
 });
 
@@ -72,10 +109,6 @@ document.getElementById('generateButton').addEventListener('click', () => {
 
 // --- CORE FUNCTIONS ---
 
-/**
- * This function is updated to display the DOMINO_COLORS array
- * as a copy-pasteable code block with inline color swatches.
- */
 function displayAvailableColors() {
     const paletteContainer = document.getElementById('colorPalette');
 
