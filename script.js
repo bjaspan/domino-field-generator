@@ -3,7 +3,21 @@
  * This list will be populated by the color picker tool.
  * You can also paste a previously generated list here.
  */
-let DOMINO_COLORS = [];
+let DOMINO_COLORS = [
+    [224, 218, 196],
+    [210, 41, 38],
+    [252, 127, 3],
+    [247, 193, 5],
+    [70, 204, 56],
+    [90, 54, 31],
+    [55, 67, 79],
+    [8, 124, 190],
+    [24, 90, 169],
+    [112, 95, 139],
+    [201, 45, 106],
+    [192, 174, 134],
+    [140, 142, 131],
+];
 let pickerImage = null; // This will hold the full-resolution image for sampling
 
 // --- EVENT LISTENERS ---
